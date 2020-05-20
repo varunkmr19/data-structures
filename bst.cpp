@@ -11,6 +11,7 @@ private:
 	int nodeCount;
 	Node *root;
 	
+	// Create and return a node template
 	Node* createNode(Node *left, Node *right, int data) {
 		Node *newNode = new Node;
 		newNode->data = data;
@@ -20,15 +21,16 @@ private:
 		return newNode;
 	}
 	
+	// searches for ele in the tree
 	bool contains(Node *node, int data) {
 		if(node == NULL)
 			return false;
 			
 		int cmp = compareTo(data, node->data);
 		
-		if(cmp < 0) {
+		if(cmp < 0) {	// dig left subtree
 			return contains(node->left, data);
-		} else if(cmp > 0) {
+		} else if(cmp > 0) {	// dig right subtree
 			return contains(node->right, data);
 		} else {
 			return true;
@@ -44,13 +46,20 @@ private:
 			return 0;
 	}
 	
+	// returns height of the bst
+	int height(Node *node) {
+		if(node == NULL)
+			return 0;
+		return max(height(node->left), height(node->right)) + 1;
+	}
+	
 	Node* add(Node *node, int data) {
 		if(node == NULL) {
 			node = createNode(NULL,NULL,data);
-		} else {
+		} else {	// add to the left subtree
 			if(compareTo(data, node->data) < 0) {
 				node->left = add(node->left, data);
-			} else {
+			} else {	// add to the right subtree
 				node->right = add(node->right, data);
 			}
 		}
@@ -63,26 +72,46 @@ private:
 		
 		int cmp = compareTo(data, node->data);
 		
+		// search for node in left subtree
 		if(cmp < 0) {
+				
 			node->left = remove(node->left,data);
+			
+		// search for node in right subtree
 		} else if(cmp > 0) {
+				
 			node->right = remove(node->right, data);
+			
+		// found the node to delete
 		} else {
+			
+			// node with only right child
 			if(node->left == NULL) {
+				
 				Node *rightChild = node->right;
 				node = NULL;
 				delete node;
 				
 				return rightChild;
+				
+			// node with only left child
 			} else if(node->right == NULL) {
+				
 				Node *leftChild = node->left;
 				node = NULL;
 				delete node;
 				
 				return leftChild;
+			
+			// node with both left and right child
 			} else {
+				
+				// find min node in right subtree or 
+				// max node in left subtree.
 				Node *temp = findMin(node->right);
+				
 				swap(node->data, temp->data);
+				
 				node->right = remove(node->right, temp->data);
 			}
 		}
@@ -107,6 +136,10 @@ public:
 	
 	int size() {
 		return nodeCount;
+	}
+	
+	int height() {
+		return height(root);
 	}
 	
 	bool contains(int ele) {
@@ -163,6 +196,7 @@ int main() {
 	b.display();
 	
 	cout << b.remove(3) << endl;
+	
 	
 	b.display();
 }
